@@ -29,7 +29,7 @@ type Streamer interface {
 	Publish(message string)
 }
 ```
-# Development Pipeline
+# Development roadmap
 
 > over 90% code coverage
 
