@@ -14,7 +14,7 @@ import (
 
 type Streamer interface {
 	Accept(ctx context.Context, w http.ResponseWriter, r *http.Request, clientKey string) error
-	ClientExists(clientKey string) bool
+	Exists(clientKey string) bool
 	Publish(message string)
 }
 
@@ -65,8 +65,8 @@ func (s *stream) Publish(msg string) {
 	}
 }
 
-// ClientExists uses the provided clientID to determine if the client is alive and part of the stream's client pool.
-func (s *stream) ClientExists(clientID string) bool {
+// Exists uses the provided clientID to determine if the client is alive and part of the stream's client pool.
+func (s *stream) Exists(clientID string) bool {
 	for _, v := range s.clients() {
 		if v.ID() == clientID {
 			return true
