@@ -29,3 +29,8 @@ type Streamer interface {
 	Publish(message string)
 }
 ```
+# Development Pipeline
+
+> over 90% code coverage
+
+> finish consuming the clients read buffer in the stream
