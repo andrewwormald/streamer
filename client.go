@@ -1,4 +1,4 @@
-package client
+package streamer
 
 import (
 	"context"
@@ -12,42 +12,34 @@ import (
 	"github.com/luno/jettison/log"
 )
 
-type Client interface {
-	ID() string
-	Alive() bool
-	Close() error
-	Message(ctx context.Context, msg string)
-	Listen() chan string
-}
-
 type client struct {
 	mu sync.Mutex
-	id    string
+	id string
 
-	writeBuf    chan string
-	readBuf    chan string
+	writeBuf  chan string
+	readBuf   chan string
 	interrupt chan os.Signal
 
 	closed bool
 
-	ctx context.Context
+	ctx    context.Context
 	cancel context.CancelFunc
-	conn  *websocket.Conn
+	conn   *websocket.Conn
 }
 
 // New provides a new stream client that satisfies the Client interface. This method kicks off housekeeping loops such
 // as listening to messaged from the client and closing the connection when the client disconnects or is too slow.
-func New(c *websocket.Conn, id string) *client {
+func newClient(c *websocket.Conn, id string) *client {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	s := &client{
-		id:   id,
-		writeBuf:   make(chan string, 20),
-		readBuf:   make(chan string, 20),
+		id:        id,
+		writeBuf:  make(chan string, 10),
+		readBuf:   make(chan string, 10),
 		interrupt: make(chan os.Signal, 1),
-		ctx: ctx,
-		cancel: cancel,
-		conn: c,
+		ctx:       ctx,
+		cancel:    cancel,
+		conn:      c,
 	}
 
 	signal.Notify(s.interrupt, os.Interrupt)
@@ -60,17 +52,17 @@ func New(c *websocket.Conn, id string) *client {
 }
 
 // NewMock returns a mock client without running any housekeeping loops.
-func NewMock(w *websocket.Conn, ID string) *client {
+func newMockClient(w *websocket.Conn, ID string) *client {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	return &client{
-		id:   ID,
-		writeBuf:   make(chan string, 20),
+		id:        ID,
+		writeBuf:  make(chan string, 20),
 		readBuf:   make(chan string, 20),
 		interrupt: make(chan os.Signal, 1),
-		conn: w,
-		ctx: ctx,
-		cancel: cancel,
+		conn:      w,
+		ctx:       ctx,
+		cancel:    cancel,
 	}
 }
 
@@ -85,7 +77,7 @@ func (s *client) ID() string {
 func (s *client) Alive() bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.closed
+	return !s.closed
 }
 
 // Close sends a close connection message to the client and returns nil if the operation is successful. If nil is
@@ -124,7 +116,7 @@ func (s *client) Listen() chan string {
 	reply := make(chan string)
 	go func() {
 		for {
-			msg := <- s.readBuf
+			msg := <-s.readBuf
 			reply <- msg
 		}
 	}()
@@ -137,9 +129,7 @@ func (s *client) run() {
 		select {
 		case <-s.ctx.Done():
 			s.closed = true
-			if err := s.Close(); err != nil {
-				log.Error(s.ctx, err)
-			}
+			s.Close()
 			return
 		case <-s.interrupt:
 			s.cancel()
@@ -153,7 +143,7 @@ func (s *client) run() {
 // write entails a writing deadline and writes a text message to the client. If the operation fails the client's
 // context is cancelled and an error is logged.
 func (s *client) write(msg []byte) {
-	timeout := time.Second * 30
+	timeout := time.Second * 5
 	err := s.conn.SetWriteDeadline(time.Now().Add(timeout))
 	if err != nil {
 		log.Error(s.ctx, err)
@@ -200,5 +190,3 @@ func (s *client) listen() {
 		}
 	}
 }
-
-var _ Client = (*client)(nil)

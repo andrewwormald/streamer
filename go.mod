@@ -7,4 +7,5 @@ require (
 	github.com/luno/jettison v0.0.0-20191223144501-7fe4a971f291
 	github.com/luno/luno-go v0.0.13
 	github.com/stretchr/testify v1.3.0
+	golang.org/x/tools v0.0.0-20200309202150-20ab64c0d93f // indirect
 )
