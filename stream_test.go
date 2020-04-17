@@ -7,11 +7,12 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 
-	"streamer"
+	"github.com/SwiftySpartan/streamer"
 )
 
 // TestExists validates the stream's ability to accept, return open connection count, and determine if a connection
@@ -51,6 +52,7 @@ func TestExists(t *testing.T) {
 			_, _, err := websocket.DefaultDialer.Dial(u, nil)
 			require.Nil(t, err)
 
+			time.Sleep(time.Millisecond)
 			require.True(t, s.Exists(tt.id))
 			require.Equal(t, tt.expected, s.OpenConnections())
 		})
