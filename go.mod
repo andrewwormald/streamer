@@ -1,4 +1,4 @@
-module github.com/SwiftySpartan/streamer
+module github.com/andrewwormald/streamer
 
 go 1.13
 

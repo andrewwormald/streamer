@@ -12,7 +12,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 
-	"github.com/SwiftySpartan/streamer"
+	"github.com/andrewwormald/streamer"
 )
 
 // TestExists validates the stream's ability to accept, return open connection count, and determine if a connection
