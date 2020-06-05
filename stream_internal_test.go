@@ -2,21 +2,39 @@ package streamer
 
 import (
 	"fmt"
+	"strconv"
 	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
 
+func TestStreamBufferSize(t *testing.T) {
+	stream := New(WithReadBufferSize(1))
+	expectedMessage := "hello client "
+	go stream.Responder(func(m ReceiveMessage) {
+		expected := expectedMessage + m.ID
+		require.Equal(t, expected, m.Message)
+	})
+
+	for i := 0; i < 10; i++ {
+		id := strconv.FormatInt(int64(i), 10)
+		stream.readBuff <- ReceiveMessage{
+			ID:      id,
+			Message: expectedMessage + id,
+		}
+	}
+}
+
 // TestStore tests the streams internal store functionality
 func TestStore(t *testing.T) {
 	s := New()
-	clientID := "conn_1"
+	channelID := "conn_1"
 
-	c := newMockClient(nil, clientID)
+	c := NewChannel(nil, channelID)
 	s.store(c)
 
-	_, exists := s.pool[clientID]
+	_, exists := s.pool[channelID]
 	require.True(t, exists)
 }
 
@@ -26,10 +44,10 @@ func TestStoreConcurrency(t *testing.T) {
 
 	s := New()
 	ls := make([]int32, 100)
-	for k, _ := range ls {
+	for k := range ls {
 		wg.Add(1)
 		id := makeConnID(k)
-		c := newMockClient(nil, id)
+		c := NewChannel(nil, id)
 
 		go func() {
 			s.store(c)
@@ -38,7 +56,7 @@ func TestStoreConcurrency(t *testing.T) {
 	}
 
 	wg.Wait()
-	for k, _ := range ls {
+	for k := range ls {
 		id := makeConnID(k)
 		_, exists := s.pool[id]
 		require.True(t, exists)
@@ -51,24 +69,24 @@ func TestRemove(t *testing.T) {
 	s := New()
 	ls := make([]int32, 100)
 	// Add
-	for k, _ := range ls {
+	for k := range ls {
 		id := makeConnID(k)
-		c := newMockClient(nil, id)
+		c := NewChannel(nil, id)
 		s.store(c)
 	}
 
 	// Validate
-	for k, _ := range ls {
+	for k := range ls {
 		id := makeConnID(k)
 		_, exists := s.pool[id]
 		require.True(t, exists)
 	}
 
 	// Remove
-	for k, _ := range ls {
+	for k := range ls {
 		wg.Add(1)
 		id := makeConnID(k)
-		c := newMockClient(nil, id)
+		c := NewChannel(nil, id)
 
 		go func() {
 			s.remove(c)
@@ -78,7 +96,7 @@ func TestRemove(t *testing.T) {
 
 	wg.Wait()
 	// Validate
-	for k, _ := range ls {
+	for k := range ls {
 		id := makeConnID(k)
 		_, exists := s.pool[id]
 		require.False(t, exists)
