@@ -8,7 +8,7 @@
 ```go
 package main
 
-import "github.com/SwiftySpartan/streamer"
+import "github.com/andrewwormald/streamer"
 
 func main() {
     s := streamer.New() // Returns a new stream
