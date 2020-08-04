@@ -1,4 +1,4 @@
-# stream
+# streamer
 
 - stream aims at providing a no hassle, quick, and easy integration of websockets for your Go server. 
 - stream is not a complete package and will be extended in the future.
