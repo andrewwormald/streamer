@@ -1,5 +1,7 @@
 # streamer
 
+## Still in development mode
+
 [![Build](https://github.com/andrewwormald/streamer/workflows/Go/badge.svg?branch=master)](https://github.com/andrewwormald/streamer/actions?query=workflow%3AGo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/andrewwormald/streamer)](https://goreportcard.com/report/github.com/andrewwormald/streamer)
 [![codecov](https://codecov.io/gh/andrewwormald/streamer/branch/master/graph/badge.svg)](https://codecov.io/gh/andrewwormald/streamer)
