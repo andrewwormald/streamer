@@ -37,3 +37,6 @@ jobs:
 
     - name: Generate coverage report
       run: go test -coverprofile fmtcoverage.html fmt
+
+    - name: Upload coverage report
+      run: bash <(curl -s https://codecov.io/bash)
