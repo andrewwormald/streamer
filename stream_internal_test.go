@@ -13,7 +13,7 @@ func TestStreamBufferSize(t *testing.T) {
 	stream := New(WithReadBufferSize(1))
 	expectedMessage := "hello client "
 	go stream.Responder(func(m ReceiveMessage) {
-		expected := expectedMessage + m.ID
+		expected := expectedMessage + m.ChannelID
 		require.Equal(t, expected, m.Message)
 	})
 
