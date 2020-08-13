@@ -65,8 +65,4 @@ var ErrChannelDoesNotExist = errors.New("channel does not exist", j.C("ERR_bcd40
 
 # Development roadmap
 
-> over 90% code coverage
-
-> finish consuming the clients read buffer in the stream
-
 > refactor to not use gorilla and increase memory efficiency
