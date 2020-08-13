@@ -1,4 +1,4 @@
-# stream
+# streamer
 
 - stream aims at providing a no hassle, quick, and easy integration of websockets for your Go server. 
 - stream is not a complete package and will be extended in the future.
@@ -8,7 +8,7 @@
 ```go
 package main
 
-import "github.com/SwiftySpartan/streamer"
+import "github.com/andrewwormald/streamer"
 
 func main() {
     s := streamer.New() // Returns a new stream
