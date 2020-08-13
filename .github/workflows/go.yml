@@ -36,7 +36,7 @@ jobs:
       run: go test -v .
 
     - name: Generate coverage report
-      run: go test -race -coverprofile=coverage.txt -covermode=atomic
+      run: go test -coverprofile=coverage.txt -covermode=atomic
 
     - name: Upload coverage report
       run: bash <(curl -s https://codecov.io/bash)
