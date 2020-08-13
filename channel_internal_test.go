@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 
-	"bitx/play/fusion/ops/streamer/mock"
+	"github.com/andrewwormald/streamer/mock"
 )
 
 func TestID(t *testing.T) {

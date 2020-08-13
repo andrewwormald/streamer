@@ -9,8 +9,8 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 
-	"bitx/play/fusion/ops/streamer"
-	"bitx/play/fusion/ops/streamer/mock"
+	"github.com/andrewwormald/streamer"
+	"github.com/andrewwormald/streamer/mock"
 )
 
 func TestTopicManagement(t *testing.T) {

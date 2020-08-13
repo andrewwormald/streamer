@@ -3,15 +3,11 @@ module github.com/andrewwormald/streamer
 go 1.13
 
 require (
-	github.com/dave/dst v0.23.1 // indirect
-	github.com/go-stack/stack v1.8.0 // indirect
-	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/gorilla/websocket v1.4.1
 	github.com/luno/jettison v0.0.0-20191223144501-7fe4a971f291
-	github.com/luno/luno-go v0.0.13
+	github.com/pborman/uuid v1.2.0
 	github.com/stretchr/testify v1.3.0
-	golang.org/x/exp/errors v0.0.0-20190306152737-a1d7652674e8 // indirect
-	golang.org/x/tools v0.0.0-20200309202150-20ab64c0d93f // indirect
-	google.golang.org/grpc v1.22.1 // indirect
-	gopkg.in/yaml.v2 v2.2.4 // indirect
+	golang.org/x/net v0.0.0-20200226121028-0de0cce0169b // indirect
+	golang.org/x/sys v0.0.0-20190412213103-97732733099d // indirect
+	golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543 // indirect
 )
