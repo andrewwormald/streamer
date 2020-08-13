@@ -1,5 +1,10 @@
 # streamer
 
+[![Build](https://github.com/andrewwormald/streamer/workflows/Go/badge.svg?branch=master)](https://github.com/andrewwormald/streamer/actions?query=workflow%3AGo)
+[![Go Report Card](https://goreportcard.com/badge/github.com/andrewwormald/streamer)](https://goreportcard.com/report/github.com/andrewwormald/streamer)
+
+
+
 - stream aims at providing a no hassle, quick, and easy integration of websockets for your Go server. 
 - stream is not a complete package and will be extended in the future.
 - stream is built on top of https://github.com/gorilla/websocket.
