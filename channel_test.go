@@ -117,7 +117,7 @@ func TestReceive(t *testing.T) {
 	pool := mock.NewChannelPool(t, stream, 5)
 	message := "hello from "
 	go stream.Responder(func(m streamer.ReceiveMessage) {
-		expected := message + m.ID
+		expected := message + m.ChannelID
 		require.Equal(t, expected, m.Message)
 	})
 

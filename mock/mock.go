@@ -11,11 +11,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// WSChannel has the client side connection and it's ID refers to the ID the stream would use to reference it.
 type WSChannel struct {
 	ID   string
 	Conn *websocket.Conn
 }
 
+// Acceptor is an acceptor interface for the NewChannelPool as to not be dependant on the streamer package
 type Acceptor interface {
 	Accept(w http.ResponseWriter, r *http.Request, channelKey string) error
 }

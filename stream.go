@@ -11,8 +11,8 @@ import (
 	"github.com/luno/jettison/j"
 )
 
-var ErrChannelDoesNotExist = errors.New("channel does not exist", j.C("ERR_bcd404068d4f7f1b"))
-
+// Stream is a abstracted ws client connection pool that has an API to interact with the entire pool of client
+// connections. Each pool requires that the connection is accepted into it before it can include it or listen to it.
 type Stream struct {
 	mu       sync.RWMutex
 	readBuff chan ReceiveMessage
@@ -41,14 +41,18 @@ func New(opts ...StreamOption) *Stream {
 	return s
 }
 
+// StreamOption is a type that allows configuration of the Stream type.
 type StreamOption func(*Stream)
 
+// WithReadBufferSize takes an int which is used to set the go channel size and therefore passing 1 would entail a
+// limit of 1 message to be queued at a time.
 func WithReadBufferSize(size int) StreamOption {
 	return func(s *Stream) {
 		s.readBuff = make(chan ReceiveMessage, size)
 	}
 }
 
+// WithUpgrader allows the stream to be configured with a custom gorilla websocket upgrader.
 func WithUpgrader(u websocket.Upgrader) StreamOption {
 	return func(s *Stream) {
 		s.u = u
@@ -96,6 +100,9 @@ func (s *Stream) Responder(handler func(m ReceiveMessage)) {
 func (s *Stream) Read() chan ReceiveMessage {
 	return s.readBuff
 }
+
+// ErrChannelDoesNotExist is returned when the channel is not found in the stream
+var ErrChannelDoesNotExist = errors.New("channel does not exist", j.C("ERR_bcd404068d4f7f1b"))
 
 // Collect uses the provided channelID to fetch the channel
 func (s *Stream) Collect(channelID string) (*Channel, error) {

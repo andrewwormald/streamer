@@ -14,6 +14,8 @@ import (
 
 const defaultWriteBuffSize = 5
 
+// Channel is the abstraction of the websocket connection. You interact with the websocket connection via the Channel
+// struct and all clients are represented as a Channel as soon as they are accepted into the stream.
 type Channel struct {
 	mu *sync.Mutex
 	id string
@@ -30,6 +32,7 @@ type Channel struct {
 	asyncFlush bool
 }
 
+// ChannelOption provides the ability to configure the Channel to your own specification
 type ChannelOption func(c *Channel)
 
 // NewChannel provides a new Channel that the wraps the websocket connection and allows Stream to easily interface with
@@ -61,12 +64,18 @@ func NewChannel(wc *websocket.Conn, id string, opts ...ChannelOption) *Channel {
 	return c
 }
 
+// WithoutAsyncFlush means that the Channel will not send any messages it is send and depending on the WriteBufferSize
+// will wait for the first message to be consumed. This is largely used for tests and not intended to be used in
+// production.
 func WithoutAsyncFlush() ChannelOption {
 	return func(c *Channel) {
 		c.asyncFlush = false
 	}
 }
 
+// WithWriteBufferSize changes the size of the underlying write buffer. The write buffer size correlates to the number
+// of messages and not the actual size of the messages. Therefore a buffer size of 1 would allow 1 message to be queued
+// at a time.
 func WithWriteBufferSize(size int) ChannelOption {
 	return func(c *Channel) {
 		c.writeBuf = make(chan string, size)
@@ -169,7 +178,7 @@ func (c *Channel) Recv(ch chan ReceiveMessage) {
 			case <-ctx.Done():
 				log.Error(ctx, errors.New("context closed before chance to read message from channel"))
 			case ch <- ReceiveMessage{
-				ID:      c.ID(),
+				ChannelID:      c.ID(),
 				Message: string(b),
 			}:
 			}

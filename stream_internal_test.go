@@ -20,7 +20,7 @@ func TestStreamBufferSize(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		id := strconv.FormatInt(int64(i), 10)
 		stream.readBuff <- ReceiveMessage{
-			ID:      id,
+			ChannelID:      id,
 			Message: expectedMessage + id,
 		}
 	}
