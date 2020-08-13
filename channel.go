@@ -178,8 +178,8 @@ func (c *Channel) Recv(ch chan ReceiveMessage) {
 			case <-ctx.Done():
 				log.Error(ctx, errors.New("context closed before chance to read message from channel"))
 			case ch <- ReceiveMessage{
-				ChannelID:      c.ID(),
-				Message: string(b),
+				ChannelID: c.ID(),
+				Message:   string(b),
 			}:
 			}
 			cancel()
