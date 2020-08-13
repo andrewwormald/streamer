@@ -47,6 +47,7 @@ func TestInterruptClose(t *testing.T) {
 func TestRecvReturnWhenContextClosed(t *testing.T) {
 	stream := New()
 	pool := mock.NewChannelPool(t, stream, 1)
+	time.Sleep(time.Millisecond * 100)
 	for _, ws := range pool {
 		channel, err := stream.Collect(ws.ID)
 		require.Nil(t, err)
