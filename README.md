@@ -68,6 +68,8 @@ package streamer
 var ErrChannelDoesNotExist = errors.New("channel does not exist", j.C("ERR_bcd404068d4f7f1b"))
 ```
 
-# Development roadmap
+# Upcoming
+
+> Add go doc
 
 > refactor to not use gorilla and increase memory efficiency
