@@ -35,3 +35,6 @@ jobs:
 
     - name: Test
       run: go test -v .
+
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v1
