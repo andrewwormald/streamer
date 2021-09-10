@@ -102,9 +102,11 @@ func (c *Channel) Closed() bool {
 func (c *Channel) Close(closeCode int) {
 	c.cancel()
 
+	c.mu.Lock()
 	err := c.conn.WriteMessage(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(closeCode, ""))
+	c.mu.Unlock()
 	if errors.Is(err, websocket.ErrCloseSent) {
 		// NoReturnErr: Connection already closed, ensure context is still cancelled by not returning
 	} else if err != nil {
@@ -197,7 +199,10 @@ func (c *Channel) write(msg []byte) {
 		log.Error(c.ctx, err)
 	}
 
-	if err := c.conn.WriteMessage(websocket.TextMessage, msg); err != nil {
+	c.mu.Lock()
+	err = c.conn.WriteMessage(websocket.TextMessage, msg)
+	c.mu.Unlock()
+	if err != nil {
 		// NoReturnErr: Connection closed and will be removed by sweeper
 		if !errors.Is(err, websocket.ErrCloseSent) {
 			log.Error(c.ctx, err)
