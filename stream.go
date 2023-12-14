@@ -14,7 +14,7 @@ import (
 // Stream is a abstracted ws client connection pool that has an API to interact with the entire pool of client
 // connections. Each pool requires that the connection is accepted into it before it can include it or listen to it.
 type Stream struct {
-	ctx context.Context
+	ctx      context.Context
 	mu       sync.RWMutex
 	readBuff chan ReceiveMessage
 	pool     map[string]*Channel
@@ -25,7 +25,7 @@ type Stream struct {
 // connections are removed from the Stream
 func New(ctx context.Context, opts ...StreamOption) *Stream {
 	s := &Stream{
-		ctx: ctx,
+		ctx:      ctx,
 		pool:     make(map[string]*Channel),
 		readBuff: make(chan ReceiveMessage, 10),
 		u: websocket.Upgrader{
@@ -39,6 +39,7 @@ func New(ctx context.Context, opts ...StreamOption) *Stream {
 	}
 
 	go s.cleanPoolForever(ctx)
+	go s.sendKeepAliveToClients(ctx)
 
 	return s
 }
@@ -158,6 +159,28 @@ func (s *Stream) cleanPoolForever(ctx context.Context) {
 			s.remove(&c)
 		}
 		time.Sleep(time.Second)
+	}
+}
+
+// sendKeepAliveToClients is a blocking call that sends the "keep-alive" messages to clients. If it fails to send the
+// "keep-alive" message then it will close and remove the client.
+func (s *Stream) sendKeepAliveToClients(ctx context.Context) {
+	for {
+		if ctx.Err() != nil {
+			return
+		}
+
+		for _, c := range s.channels() {
+			ctx, cancel := context.WithTimeout(s.ctx, time.Millisecond*200)
+			err := c.Send(ctx, "Keep-alive")
+			if err != nil {
+				// NoReturnErr: Allow other channels to be unaffected and close this connection
+				c.Close(websocket.CloseTryAgainLater)
+			}
+			cancel()
+		}
+
+		time.Sleep(10 * time.Minute)
 	}
 }
 
