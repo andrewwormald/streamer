@@ -2,13 +2,13 @@ package streamer
 
 import (
 	"context"
-	"github.com/luno/jettison/j"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
 	"github.com/luno/jettison/errors"
+	"github.com/luno/jettison/j"
 )
 
 // Stream is a abstracted ws client connection pool that has an API to interact with the entire pool of client
