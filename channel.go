@@ -2,7 +2,6 @@ package streamer
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"sync"
@@ -57,7 +56,6 @@ func NewChannel(ctx context.Context, wc *websocket.Conn, id string, opts ...Chan
 	}
 
 	if c.asyncFlush {
-		fmt.Println("running async flush")
 		go c.flushWriteAndManage()
 	}
 
