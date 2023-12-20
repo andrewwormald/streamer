@@ -3,6 +3,7 @@ package streamer
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 	"sync"
 	"testing"
@@ -34,7 +35,15 @@ func TestStore(t *testing.T) {
 	s := New(ctx)
 	channelID := "conn_1"
 
-	c := NewChannel(ctx, nil, channelID)
+	c := &Channel{
+		mu:         &sync.Mutex{},
+		id:         channelID,
+		subs:       make(map[string]bool),
+		writeBuf:   make(chan string, defaultWriteBuffSize),
+		interrupt:  make(chan os.Signal, 1),
+		ctx:        ctx,
+		asyncFlush: true,
+	}
 	s.store(c)
 
 	_, exists := s.pool[channelID]
@@ -51,7 +60,15 @@ func TestStoreConcurrency(t *testing.T) {
 	for k := range ls {
 		wg.Add(1)
 		id := makeConnID(k)
-		c := NewChannel(ctx,nil, id)
+		c := &Channel{
+			mu:         &sync.Mutex{},
+			id:         id,
+			subs:       make(map[string]bool),
+			writeBuf:   make(chan string, defaultWriteBuffSize),
+			interrupt:  make(chan os.Signal, 1),
+			ctx:        ctx,
+			asyncFlush: true,
+		}
 
 		go func() {
 			s.store(c)
@@ -76,7 +93,15 @@ func TestRemove(t *testing.T) {
 	// Add
 	for k := range ls {
 		id := makeConnID(k)
-		c := NewChannel(ctx,nil, id)
+		c := &Channel{
+			mu:         &sync.Mutex{},
+			id:         id,
+			subs:       make(map[string]bool),
+			writeBuf:   make(chan string, defaultWriteBuffSize),
+			interrupt:  make(chan os.Signal, 1),
+			ctx:        ctx,
+			asyncFlush: true,
+		}
 		s.store(c)
 	}
 
@@ -91,7 +116,15 @@ func TestRemove(t *testing.T) {
 	for k := range ls {
 		wg.Add(1)
 		id := makeConnID(k)
-		c := NewChannel(ctx,nil, id)
+		c := &Channel{
+			mu:         &sync.Mutex{},
+			id:         id,
+			subs:       make(map[string]bool),
+			writeBuf:   make(chan string, defaultWriteBuffSize),
+			interrupt:  make(chan os.Signal, 1),
+			ctx:        ctx,
+			asyncFlush: true,
+		}
 
 		go func() {
 			s.remove(c)
