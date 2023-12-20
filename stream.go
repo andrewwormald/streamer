@@ -82,7 +82,7 @@ func (s *Stream) Accept(w http.ResponseWriter, r *http.Request, channelKey strin
 // set a deadline per channel.
 func (s *Stream) Publish(payload string) {
 	for _, c := range s.channels() {
-		ctx, cancel := context.WithTimeout(s.ctx, time.Millisecond*200)
+		ctx, cancel := context.WithTimeout(s.ctx, time.Second)
 		err := c.Send(ctx, payload)
 		if err != nil {
 			// NoReturnErr: Allow other channels to be unaffected and close this connection
@@ -171,7 +171,7 @@ func (s *Stream) sendKeepAliveToClients(ctx context.Context) {
 		}
 
 		for _, c := range s.channels() {
-			ctx, cancel := context.WithTimeout(s.ctx, time.Millisecond*200)
+			ctx, cancel := context.WithTimeout(s.ctx, time.Second*30)
 			err := c.Send(ctx, "Keep-alive")
 			if err != nil {
 				// NoReturnErr: Allow other channels to be unaffected and close this connection
