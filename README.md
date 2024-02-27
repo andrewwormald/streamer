@@ -39,8 +39,11 @@ func (s *Stream) Read() chan ReceiveMessage {}
 // Collect uses the provided channelID to fetch the channel
 func (s *Stream) Collect(channelID string) (*Channel, error) {}
 
-// Connections returns the amount of valid channels that are in the Stream.
-func (s *Stream) Connections() int {}
+// ConnectionsCount returns the amount of valid channels that are in the Stream.
+func (s *Stream) ConnectionsCount() int {}
+
+// ConnectionKeys returns the keys of all the current valid connections.
+func (s *Stream) ConnectionKeys() []string {}
 
 ```
 ### Options
