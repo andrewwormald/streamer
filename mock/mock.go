@@ -22,7 +22,7 @@ type Acceptor interface {
 	Accept(w http.ResponseWriter, r *http.Request, channelKey string) error
 }
 
-// NewChannelPool returns a pool of channel side ws connections that get injected via the Accept method which Stream
+// NewChannelPool returns a pool of client side ws connections that get injected via the Accept method which Stream
 // satisfies.
 func NewChannelPool(t *testing.T, a Acceptor, connectionCount int) []WSChannel {
 	var pool []WSChannel

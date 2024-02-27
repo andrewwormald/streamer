@@ -99,4 +99,14 @@ func TestConnectionsCount(t *testing.T) {
 	connectionCount := 1000
 	_ = mock.NewChannelPool(t, s, connectionCount)
 	require.Equal(t, connectionCount, s.Connections())
+	require.Equal(t, connectionCount, s.ConnectionsCount())
+}
+
+func TestConnectionsKeys(t *testing.T) {
+	ctx := context.TODO()
+	s := New(ctx)
+	connectionCount := 1000
+	_ = mock.NewChannelPool(t, s, connectionCount)
+
+	require.Equal(t, connectionCount, len(s.ConnectionKeys()))
 }
