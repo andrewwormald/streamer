@@ -109,11 +109,33 @@ func (s *Stream) Read() chan ReceiveMessage {
 }
 
 // Connections returns the amount of valid channels that are in the Stream.
+// Deprecated: Will be removed in the future. Instead, use ConnectionsCount.
 func (s *Stream) Connections() int {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	return len(s.pool)
+}
+
+// ConnectionsCount returns the amount of valid channels that are in the Stream.
+func (s *Stream) ConnectionsCount() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	return len(s.pool)
+}
+
+// ConnectionKeys returns the keys of all the current valid connections.
+func (s *Stream) ConnectionKeys() []string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	var keys []string
+	for key := range s.pool {
+		keys = append(keys, key)
+	}
+
+	return keys
 }
 
 // store safely adds the channel to the Stream's channel pool without causing any data races.
