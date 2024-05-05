@@ -103,16 +103,11 @@ func (c *Channel) Close(closeCode int) {
 	c.cancel()
 
 	c.mu.Lock()
-	err := c.conn.WriteMessage(
+	// Best effort - send close signal if client is still there
+	_ = c.conn.WriteMessage(
 		websocket.CloseMessage,
 		websocket.FormatCloseMessage(closeCode, ""))
 	c.mu.Unlock()
-	if errors.Is(err, websocket.ErrCloseSent) {
-		// NoReturnErr: Connection already closed, ensure context is still cancelled by not returning
-	} else if err != nil {
-		// NoReturnErr: Connection tainted and marked for closing
-		log.Error(c.ctx, err)
-	}
 }
 
 // Send pushes a string to the channel's write buffer. If the buffer is full this method will hang until the
