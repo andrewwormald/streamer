@@ -65,7 +65,9 @@ func WithUpgrader(u websocket.Upgrader) StreamOption {
 // Accept takes ownership of upgrading the HTTP server connection to the WebSocket protocol and adding the new connection
 // to the Stream's channel pool.
 func (s *Stream) Accept(w http.ResponseWriter, r *http.Request, channelKey string) error {
-	s.u.CheckOrigin = func(r *http.Request) bool { return true }
+	if s.u.CheckOrigin == nil {
+		s.u.CheckOrigin = func(r *http.Request) bool { return true }
+	}
 
 	conn, err := s.u.Upgrade(w, r, nil)
 	if err != nil {
