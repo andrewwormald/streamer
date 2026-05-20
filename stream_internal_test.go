@@ -3,11 +3,15 @@ package streamer
 import (
 	"context"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"testing"
 
+	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/require"
 )
 
@@ -27,6 +31,25 @@ func TestStreamBufferSize(t *testing.T) {
 			Message:   expectedMessage + id,
 		}
 	}
+}
+
+func TestAcceptRespectsCustomCheckOrigin(t *testing.T) {
+	ctx := context.Background()
+	u := websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool { return false },
+	}
+	stream := New(ctx, WithUpgrader(u))
+
+	errCh := make(chan error, 1)
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		errCh <- stream.Accept(w, r, "id")
+	}))
+	defer server.Close()
+
+	_, _, err := websocket.DefaultDialer.Dial("ws"+strings.TrimPrefix(server.URL, "http"), nil)
+	require.Error(t, err)
+	require.Error(t, <-errCh)
+	require.Equal(t, 0, stream.ConnectionsCount())
 }
 
 // TestStore tests the streams internal store functionality
